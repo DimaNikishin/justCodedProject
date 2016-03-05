@@ -39,6 +39,10 @@
 
     Activate();
 
+    /**
+     * @function Activate
+     * @description activation initial state of main controller: load records list from local storage and configure statistic properties
+     */
     function Activate(){
       that.recordsList = localStorageService.get('personList') || [];
       updateTotals()
@@ -136,6 +140,14 @@
       return 0;
     }
 
+    /**
+     * @function navigation
+     * @description navigate between routes and configures person object precondition and filters for them
+     * @param path route url navigate to
+     * @param isRich configure person.isRich property
+     * @param isSuperPower configure person.isSuperPower property
+     * @param isGenius configure person.isGenius property
+     */
     function navigation(path, isRich, isSuperPower, isGenius){
       that.person.isRich = isRich;
       that.person.isSuperPower = isSuperPower;
@@ -156,6 +168,11 @@
       $location.path(path)
     }
 
+    /**
+     * @function toDelete
+     * @description mark what object from recordsList should be deleted
+     * @param deleteItem object to delete from array
+     */
     function toDelete(deleteItem){
       for(var i =0; i < that.recordsList.length; i++){
         that.recordsList[i].toDelete = false;
@@ -163,9 +180,21 @@
       }
     }
 
-    function deleteItem(deleteItem){
+    /**
+     * @function toDelete
+     * @description delete marked object
+     */
+    function deleteItem(){
       for(var i =0; i < that.recordsList.length; i++){
-        if(that.recordsList[i].$$hashKey == deleteItem.$$hashKey){
+        //if(that.recordsList[i].$$hashKey == deleteItem.$$hashKey){
+        //  var slicedArray = that.recordsList.slice(i);
+        //  slicedArray.shift();
+        //  that.recordsList.length = i;
+        //  that.recordsList = that.recordsList.concat(slicedArray);
+        //  localStorageService.set('personList', that.recordsList);
+        //  updateTotals();
+        //}
+        if(that.recordsList[i].toDelete){
           var slicedArray = that.recordsList.slice(i);
           slicedArray.shift();
           that.recordsList.length = i;

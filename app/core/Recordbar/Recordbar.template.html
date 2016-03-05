@@ -17,7 +17,7 @@
                 <td><input type="checkbox" ng-model="list.isSuperPower" ng-click="main.updateTotals()"></td>
                 <td><input type="checkbox" ng-model="list.isRich" ng-click="main.updateTotals()"></td>
                 <td><input type="checkbox" ng-model="list.isGenius" ng-click="main.updateTotals()"></td>
-                <td><span ng-hide="list.toDelete" ng-click="main.toDelete(list)">X</span><span ng-show="list.toDelete">Are you sure (<span ng-click="main.deleteItem(list)">Yes</span> <span ng-click="list.toDelete = !list.toDelete">No</span>)</span></td>
+                <td><span ng-hide="list.toDelete" ng-click="main.toDelete(list)">X</span><span ng-show="list.toDelete">Are you sure (<span ng-click="main.deleteItem()">Yes</span> <span ng-click="list.toDelete = !list.toDelete">No</span>)</span></td>
             </tr>
         </table>
         <div class="filters">
