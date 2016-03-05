@@ -1,0 +1,11 @@
+<div class="side-bar col-lg-2">
+    <div class="statistic">
+        <div class="title"><h3>Sidebar</h3></div>
+        <div class="total-persons"><h3 ng-click="main.navigation('/home', false, false, false)">Total Persons: {{main.recordsList.length}}</h3></div>
+        <div ng-show="main.recordsList.length">
+            <div class="properties"><h5 ng-click="main.navigation('/super-power', false, true, false)">Super Power: {{main.recordsList.totalSuperPower}}</h5></div>
+            <div class="properties"><h5 ng-click="main.navigation('/rich', true, false, false)">Rich: {{main.recordsList.totalRich}}</h5></div>
+            <div class="properties"><h5 ng-click="main.navigation('/genius', false, false, true)">Genius: {{main.recordsList.totalGenius}}</h5></div>
+        </div>
+    </div>
+</div>
