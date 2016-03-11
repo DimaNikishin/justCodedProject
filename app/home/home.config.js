@@ -17,6 +17,9 @@
       templateUrl: 'home/home.html',
       controller: 'homeController',
       controllerAs: 'home'
-    });
+    }).when('/home/:roleKey', {
+      templateUrl: 'home/home.html',
+      controller: 'mainController'
+    });;
   }
 })();

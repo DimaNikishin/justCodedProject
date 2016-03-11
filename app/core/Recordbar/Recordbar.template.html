@@ -1,29 +1,23 @@
 <div class="main-bar col-lg-8" ng-class="{bigList: main.recordsList.length > 4}">
     <div class="add-person">
         <h3>Add new person</h3>
-        <input type="text" placeholder="Name" class="name-input" ng-model="main.person.name"><input type="checkbox" ng-model="main.person.isSuperPower"> Super power <input type="checkbox" ng-model="main.person.isRich"> Rich <input type="checkbox" ng-model="main.person.isGenius"> Genius <button class="add-button" ng-click="main.addPerson(main.person)">Add</button>
+        <div class="inline"><input type="text" placeholder="Name" class="name-input" ng-model="main.person.name"></div><div class="inline" ng-repeat="role in main.person.roles"><input type="checkbox" ng-model="role.value"> {{role.title}}</div> <button class="add-button" ng-click="main.addPerson(main.person)">Add</button>
     </div>
     <div class="person-list" ng-show="main.recordsList.length">
         <table>
             <tr>
                 <th><span ng-click="main.recordsList.sort(main.sortByName)">&#9660</span> Name</th>
-                <th><span ng-click="main.recordsList.sort(main.sortBySuperPower)">&#9660</span> Super Power</th>
-                <th><span ng-click="main.recordsList.sort(main.sortByRich)">&#9660</span> Rich</th>
-                <th><span ng-click="main.recordsList.sort(main.sortByGenius)">&#9660</span> Genius</th>
+                <th ng-repeat="role in main.person.roles"><span ng-click="main.madeSort(main.recordsList,role.key)">&#9660</span> {{role.title}}</th>
                 <th>Delete</th>
             </tr>
             <tr ng-repeat="list in main.recordsList | listFilter: main.filterType : main.updateTotals">
                 <td>{{list.name}}</td>
-                <td><input type="checkbox" ng-model="list.isSuperPower" ng-click="main.updateTotals()"></td>
-                <td><input type="checkbox" ng-model="list.isRich" ng-click="main.updateTotals()"></td>
-                <td><input type="checkbox" ng-model="list.isGenius" ng-click="main.updateTotals()"></td>
+                <td ng-repeat="role in list.roles"><input type="checkbox" ng-model="role.value" ng-click="main.updateTotals()"></td>
                 <td><span ng-hide="list.toDelete" ng-click="main.toDelete(list)">X</span><span ng-show="list.toDelete">Are you sure (<span ng-click="main.deleteItem()">Yes</span> <span ng-click="list.toDelete = !list.toDelete">No</span>)</span></td>
             </tr>
         </table>
         <div class="filters">
-            <a href="javascript:void(0)" ng-class="{disabled: !main.recordsList.totalSuperPower, active: main.filterType === 'isSuperPower'}" ng-click="main.navigation('/super-power', false, true, false)">Super Power</a>
-            <a class="divider-vertical" ng-class="{disabled: !main.recordsList.totalRich, active: main.filterType === 'isRich'}" href="javascript:void(0)" ng-click="main.navigation('/rich', true, false, false)">Rich</a>
-            <a href="javascript:void(0)" ng-class="{disabled: !main.recordsList.totalGenius, active: main.filterType === 'isGenius'}" ng-click="main.navigation('/genius', false, false, true)">Genius</a>
+            <a ng-repeat="statistic in main.statistic" href="javascript:void(0)" ng-class="{disabled: !statistic.value, active: main.filterType === statistic.key}" ng-click="main.navigation(statistic.key)">{{statistic.title}} </a>
         </div>
     </div>
 </div>

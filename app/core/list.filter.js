@@ -18,7 +18,11 @@
     return function(inputArray,filteredProperty, callBackFunction){
       if(filteredProperty){
         output = inputArray.filter(function(value) {
-          return value[filteredProperty];
+          for(var i=0; i< value.roles.length; i++){
+            if(value.roles[i].key == filteredProperty){
+              return value.roles[i].value;
+            }
+          }
         });
         callBackFunction();
         return output;

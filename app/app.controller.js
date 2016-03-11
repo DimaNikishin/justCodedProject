@@ -11,19 +11,15 @@
     .module('myApp')
     .controller('mainController',mainController);
 
-  mainController.$inject = ['$location','localStorageService'];
+  mainController.$inject = ['$location','localStorageService','personRolesConstant','sortService'];
 
-  function mainController($location,localStorageService){
+  function mainController($location,localStorageService,personRolesConstant,sortService){
     var that = this;
     that.recordsList = [];
-    that.recordsList.totalRich = 0;
-    that.recordsList.totalSuperPower = 0;
-    that.recordsList.totalGenius = 0;
+    that.statistic = personRolesConstant;
     that.filterType = undefined;
     that.person = {
-      isSuperPower: false,
-      isRich: false,
-      isGenius: false,
+      roles: [],
       toDelete: false
     };
 
@@ -31,10 +27,9 @@
     that.toDelete = toDelete;
     that.deleteItem = deleteItem;
     that.updateTotals = updateTotals;
-    that.sortByName = sortByName;
-    that.sortBySuperPower = sortBySuperPower;
-    that.sortByRich = sortByRich;
-    that.sortByGenius = sortByGenius;
+    that.sortByName = sortService.sortByName;
+    that.sortByRole = sortService.sortByRole;
+    that.madeSort = sortService.madeSort;
     that.navigation = navigation;
 
     Activate();
@@ -44,7 +39,15 @@
      * @description activation initial state of main controller: load records list from local storage and configure statistic properties
      */
     function Activate(){
+      for(var i = 0; i < personRolesConstant.length;i++){
+        var personRolesCopy = {};
+        angular.copy(personRolesConstant[i],personRolesCopy);
+        personRolesCopy.value = false;
+        that.person.roles.push(personRolesCopy);
+        that.statistic[i].value = 0;
+      }
       that.recordsList = localStorageService.get('personList') || [];
+      //localStorageService.remove('personList')
       updateTotals()
     }
 
@@ -59,9 +62,15 @@
       that.recordsList.push(personCopy);
       localStorageService.set('personList', that.recordsList);
       updateTotals();
-      if($location.path() != '/Home'&& !that.person[that.filterType]){
-        that.filterType = undefined;
-        $location.path('/Home')
+
+      for(var i=0; i< that.person.roles.length; i++){
+        if($location.path() != '/home'&& that.person.roles[i].key === that.filterType && !that.person.roles[i].value){
+          for(var m=0; m < that.person.roles.length; m++){
+              that.person.roles[m].value = false;
+          }
+          that.filterType = undefined;
+          $location.path('/home')
+        }
       }
     }
 
@@ -70,102 +79,45 @@
      * @description updateTotals updates total amount of rich/with super power/genius persons using reduce function on array with persons and save to storage updated records list
      */
     function updateTotals(){
-      that.recordsList.totalRich = that.recordsList.reduce(function(previousValue, currentValue, index, array) {return previousValue + Number(currentValue.isRich);},0);
-      that.recordsList.totalSuperPower = that.recordsList.reduce(function(previousValue, currentValue, index, array) {return previousValue + Number(currentValue.isSuperPower);},0);
-      that.recordsList.totalGenius = that.recordsList.reduce(function(previousValue, currentValue, index, array) {return previousValue + Number(currentValue.isGenius);},0);
+      for(var a=0; a<that.statistic.length; a++){
+        that.statistic[a].value = 0;
+      }
+      for(var i=0; i<that.recordsList.length; i++){
+        for(var z=0; z<that.recordsList[i].roles.length; z++){
+          if(that.recordsList[i].roles[z].value){
+            for(var q=0; q<that.statistic.length; q++){
+              if(that.statistic[q].key === that.recordsList[i].roles[z].key){
+                that.statistic[q].value++
+              }
+            }
+          }
+        }
+      }
       localStorageService.set('personList', that.recordsList);
-    }
-
-    /**
-     * @function sortByName
-     * @description sortByName is function which sort array of objects by property name
-     * @param a first value to compare
-     * @param b second value to compare
-     */
-    function sortByName(a,b){
-      if (a.name > b.name) {
-        return 1;
-      }
-      if (a.name < b.name) {
-        return -1;
-      }
-      return 0;
-    }
-
-    /**
-     * @function sortBySuperPower
-     * @description sortByName is function which sort array of objects by property isSuperPower
-     * @param a first value to compare
-     * @param b second value to compare
-     */
-    function sortBySuperPower(a,b){
-      if (Number(a.isSuperPower) > Number(b.isSuperPower)) {
-        return -1;
-      }
-      if (Number(a.isSuperPower) < Number(b.isSuperPower)) {
-        return 1;
-      }
-      return 0;
-    }
-
-    /**
-     * @function sortBySuperPower
-     * @description sortByName is function which sort array of objects by property isRich
-     * @param a first value to compare
-     * @param b second value to compare
-     */
-    function sortByRich(a,b){
-      if (Number(a.isRich) > Number(b.isRich)) {
-        return -1;
-      }
-      if (Number(a.isRich) < Number(b.isRich)) {
-        return 1;
-      }
-      return 0;
-    }
-
-    /**
-     * @function sortBySuperPower
-     * @description sortByName is function which sort array of objects by property isGenius
-     * @param a first value to compare
-     * @param b second value to compare
-     */
-    function sortByGenius(a,b){
-      if (Number(a.isGenius) > Number(b.isGenius)) {
-        return -1;
-      }
-      if (Number(a.isGenius) < Number(b.isGenius)) {
-        return 1;
-      }
-      return 0;
     }
 
     /**
      * @function navigation
      * @description navigate between routes and configures person object precondition and filters for them
      * @param path route url navigate to
-     * @param isRich configure person.isRich property
-     * @param isSuperPower configure person.isSuperPower property
-     * @param isGenius configure person.isGenius property
      */
-    function navigation(path, isRich, isSuperPower, isGenius){
-      that.person.isRich = isRich;
-      that.person.isSuperPower = isSuperPower;
-      that.person.isGenius = isGenius;
-
-      if(that.person.isRich){
-        that.filterType = "isRich"
+    function navigation(path){
+      for(var i=0; i < that.person.roles.length; i++){
+        if(that.person.roles[i].key === path){
+          that.person.roles[i].value = true;
+        }
+        else{
+          that.person.roles[i].value = false;
+        }
       }
-      else if(that.person.isSuperPower){
-        that.filterType = "isSuperPower"
-      }
-      else if(that.person.isGenius){
-        that.filterType = "isGenius"
+      if(path){
+        $location.path('/home/'+ path);
+        that.filterType = path;
       }
       else{
+        $location.path('/home');
         that.filterType = undefined;
       }
-      $location.path(path)
     }
 
     /**

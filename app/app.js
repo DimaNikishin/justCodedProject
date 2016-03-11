@@ -4,9 +4,6 @@ angular.module('myApp', [
   'ngRoute',
   'myApp.home',
   'myApp.core',
-  'myApp.rich',
-  'myApp.superPower',
-  'myApp.genius',
   'LocalStorageModule',
   'myApp.version'
 ]).
