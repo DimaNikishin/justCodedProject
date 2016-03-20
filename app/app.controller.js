@@ -20,6 +20,8 @@
     that.filterType = undefined;
     that.person = {
       roles: [],
+      sorted: false,
+      reversed: false,
       toDelete: false
     };
 
@@ -27,9 +29,7 @@
     that.toDelete = toDelete;
     that.deleteItem = deleteItem;
     that.updateTotals = updateTotals;
-    that.sortByName = sortService.sortByName;
-    that.sortByRole = sortService.sortByRole;
-    that.madeSort = sortService.madeSort;
+    that.madeSort = madeSort;
     that.navigation = navigation;
 
     Activate();
@@ -43,11 +43,13 @@
         var personRolesCopy = {};
         angular.copy(personRolesConstant[i],personRolesCopy);
         personRolesCopy.value = false;
+        personRolesCopy.sorted = false;
+        personRolesCopy.reversed = false;
         that.person.roles.push(personRolesCopy);
         that.statistic[i].value = 0;
       }
-      that.recordsList = localStorageService.get('personList') || [];
-      //localStorageService.remove('personList')
+      //that.recordsList = localStorageService.get('personList') || [];
+      localStorageService.remove('personList')
       updateTotals()
     }
 
@@ -79,6 +81,12 @@
      * @description updateTotals updates total amount of rich/with super power/genius persons using reduce function on array with persons and save to storage updated records list
      */
     function updateTotals(){
+      for(var i =0; i < that.person.roles.length; i++) {
+        that.person.roles[i].sorted = false;
+        that.person.roles[i].reversed = false;
+      }
+      that.person.sorted = false;
+      that.person.reversed = false;
       for(var a=0; a<that.statistic.length; a++){
         that.statistic[a].value = 0;
       }
@@ -153,6 +161,33 @@
           that.recordsList = that.recordsList.concat(slicedArray);
           localStorageService.set('personList', that.recordsList);
           updateTotals();
+        }
+      }
+    }
+
+    /**
+     * @function madeSort
+     * @description sort table
+     */
+    function madeSort(sortColumn){
+      if(sortColumn === 'Name'){
+        for(var i =0; i < that.person.roles.length; i++) {
+          that.person.roles[i].sorted = false;
+          that.person.roles[i].reversed = false;
+        }
+        sortService.sortFunction(that.recordsList,that.person,sortService.sortByName);
+      }
+      else{
+        that.person.sorted = false;
+        that.person.reversed = false;
+        for(var i =0; i < that.person.roles.length; i++) {
+          if(that.person.roles[i].key === sortColumn){
+            sortService.sortFunction(that.recordsList,that.person.roles[i],sortService.sortByRole.bind(this,sortColumn));
+          }
+          else{
+            that.person.roles[i].sorted = false;
+            that.person.roles[i].reversed = false;
+          }
         }
       }
     }

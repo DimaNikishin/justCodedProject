@@ -16,7 +16,7 @@
 
   function sortService(){
     var service = {
-      madeSort: madeSort,
+      sortFunction: sortFunction,
       sortByRole: sortByRole,
       sortByName: sortByName
     }
@@ -61,13 +61,25 @@
     }
 
     /**
-     * @function madeSort
-     * @description madeSort is function which bind role argument (.bind cannot be called in angular expression)
-     * @param role - role to sort by
+     * @function sortFunction
+     * @description sortFunction is function which sort array of objects and change sort flags
      * @param array - array to sort
+     * @param sortType - object with sort flags
+     * @param sortFunction - function to use in .sort()
      */
-    function madeSort(array,role){
-      array.sort(service.sortByRole.bind(this,role))
+    function sortFunction(array,sortType,sortFunction){
+      if(!sortType.sorted){
+        sortType.sorted = true;
+        array.sort(sortFunction);
+      }
+      else if(sortType.sorted && !sortType.reversed){
+        sortType.reversed = true;
+        array.reverse();
+      }
+      else{
+        sortType.reversed = false;
+        array.reverse();
+      }
     }
   }
 })();

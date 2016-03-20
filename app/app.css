@@ -138,3 +138,9 @@ a.active{
     float: left;!important;
     margin-bottom: 15px;
 }
+
+th > div {
+    display: inline-block;!important;
+    width: 14px;!important;
+    height: 20px;!important;
+}

@@ -6,8 +6,8 @@
     <div class="person-list" ng-show="main.recordsList.length">
         <table>
             <tr>
-                <th><span ng-click="main.recordsList.sort(main.sortByName)">&#9660</span> Name</th>
-                <th ng-repeat="role in main.person.roles"><span ng-click="main.madeSort(main.recordsList,role.key)">&#9660</span> {{role.title}}</th>
+                <th ng-click="main.madeSort('Name')"><div ng-hide="main.person.sorted">&#11021</div><div ng-show="main.person.sorted && main.person.reversed">&#9660</div><div ng-show="main.person.sorted && !main.person.reversed">&#9650</div> Name</th>
+                <th ng-repeat="role in main.person.roles" ng-click="main.madeSort(role.key)"><div ng-hide="role.sorted">&#11021</div><div ng-show="role.sorted && role.reversed">&#9660</div><div ng-show="role.sorted && !role.reversed">&#9650</div> {{role.title}}</th>
                 <th>Delete</th>
             </tr>
             <tr ng-repeat="list in main.recordsList | listFilter: main.filterType : main.updateTotals">
